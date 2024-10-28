@@ -1,6 +1,8 @@
 import random
 import string
+import abc
 from typing import Union
+
 
 def generate_random_string(length: int) -> str:
     """生成指定长度的随机字符，包括大小写字母和数字"""
@@ -25,7 +27,16 @@ class Environment:
     def add(self, object):...
     def random_agents(self, number:int, deepth:int=0) -> list[Agent]:...
     def get_agents(self, deepth:int=0):...
+class Action:
+    @abc.abstractmethod
+    def schedule(self, agent:Agent, env:Environment):...
 
+class Schedule(Base):
+    def __init__(self, id: str = generate_random_string(4)):
+        super().__init__(id)
+        self._schedule = []
+    
+    def add(self, env:Environment, action:type[Action]):...
 
 class Agent(Base):
     def __init__(self, id: str = generate_random_string(4)):
@@ -75,3 +86,7 @@ class Environment(Base):
         agents = self.get_agents(deepth=deepth)
         sample_size = min(number, len(agents))
         return random.sample(agents, sample_size)
+    
+    def filter_agents(self, attribute:str, value, deepth:int=0) -> list[Agent]:
+        return [agent for agent in self.get_agents(deepth=deepth) if getattr(agent, attribute, None) == value]
+    
