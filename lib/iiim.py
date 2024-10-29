@@ -192,33 +192,3 @@ class Living(Base):
 class Cell(Living):
     def __init__(self, initial_value, delta:float=0, balance_value=0):
         super().__init__(initial_value, delta, balance_value)
-
-
-import numpy as np
-import matplotlib.pyplot as plt
-
-# 创建 Cell 实例
-cell = Cell(initial_value=10, delta=0.01, balance_value=50)
-
-
-# 注册平衡函数，使用平衡系数 2
-balance_coefficient = 23
-cell.register_balance_function(balance_coefficient)
-
-# 记录每一步的 current_value
-data = []
-
-# 循环 300 次
-for _ in range(30):
-    cell.step()
-    data.append(cell.current_value)
-
-# 绘制结果
-plt.figure(figsize=(10, 6))
-plt.plot(data, label='Current Value', color='blue')
-plt.title('Cell Growth Over Time')
-plt.xlabel('Steps')
-plt.ylabel('Current Value')
-plt.grid(True)
-plt.legend()
-plt.show()
