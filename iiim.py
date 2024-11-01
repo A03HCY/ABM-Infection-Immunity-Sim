@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 N = 100      # 正常细胞数量（最大感染细胞数量）
 s = 0.5       # 病毒增长速率
 a = 0.5       # 感染细胞增加的系数
-u = 0.01      # 病毒损耗系数
+u = 0.001      # 病毒损耗系数
 i = 0.1       # 免疫细胞增加的系数
-d = 5         # 延迟时间步数
+d = 500         # 延迟时间步数
 dt = 0.01     # 时间步长
 time = np.arange(0, 100, dt)  # 时间范围
 
@@ -25,10 +25,12 @@ immune_values = []
 # 存储过去的感染细胞数量以计算免疫细胞
 past_infected_cells = []
 
+healthy_cells = N
+
 # 模拟过程
 for t in time:
     # 计算病毒数量变化
-    dV = (s * (1 - infected_cells / N) * virus - u * virus * infected_cells) * dt
+    dV = (s * (1 - infected_cells / N) * virus - u * virus * healthy_cells) * dt
     virus += dV
     
     # 计算感染细胞数量变化
@@ -42,7 +44,7 @@ for t in time:
 
     # 计算免疫细胞数量，考虑延迟和感染细胞比例
     if len(past_infected_cells) >= d:
-        immune_cells += i * past_infected_cells[-d] * (1 - infected_cells / N) * dt
+        immune_cells += i * past_infected_cells[-d] * (1 - past_infected_cells[-d] / N) * dt
     
     # 存储当前值
     virus_values.append(virus)
