@@ -87,7 +87,6 @@ for t in range(1, time_steps):
     # 更新病毒量
     V[t] = V[t-1] + (v * CV[t-1] * (1 - CV[t-1] / CT)) * delta_t  # 病毒自然增长
     V[t] -= (g_va * A[t-1] * V[t-1] * (1 + (CV[t-1] / CT))) * delta_t  # 抗体中和导致的损耗
-    V[t] -= (g_vm * MSV[t-1] * V[t-1]) * delta_t  # 巨噬细胞对病毒的清除
     V[t] -= (g_vc * Chiv * V[t-1]) * delta_t  # 由于感染导致的病毒损耗
 
     # 更新刺激的巨噬细胞数量
