@@ -5,12 +5,14 @@ from typing import Union, List, Tuple
 import math
 
 class ImmuneAgent(Agent):
-    def __init__(self, id: str = generate_random_string(4), position: Tuple[int, int] = None, v=0, dt=0.01):
+    def __init__(self, id: str = generate_random_string(4), position: Tuple[int, int] = None, v=0, dt=0.01, data:ImmuneData=None):
         super().__init__(id, position)
         self.virus_simulation = ImmuneSimulation(virus=v, dt=dt)
         self.immunity_level = 0.0
         self.virus_level = 0.0
         self.add_virus = self.virus_simulation.add_virus
+        if data:
+            self.virus_simulation.update_system(data=data)
 
     def update_immunity(self, day=0.1):
         """更新免疫水平和病毒模拟"""
@@ -61,8 +63,8 @@ class ImmuneEnvironment(Environment):
         self.agent_count_history.append(len(self._agents))
         self.infected_count_history.append(self.count_infected())
 
-    def count_infected(self) -> int:
+    def count_infected(self, level:float = 10) -> int:
         """返回感染代理的数量"""
-        return sum(1 for agent in self._agents if agent.virus_level >= 10)
+        return sum(1 for agent in self._agents if agent.virus_level >= level)
 
 

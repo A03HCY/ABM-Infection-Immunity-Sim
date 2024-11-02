@@ -1,7 +1,33 @@
 import matplotlib.pyplot as plt
+import dataclasses
+
+@dataclasses.dataclass
+class ImmuneData:
+    """
+    Initializes the immune simulation model with default or custom parameters.
+    
+    Parameters:
+        N (float): Maximum normal cell count.
+        s (float): Virus growth rate.
+        a (float): Infection cell increase coefficient.
+        u (float): Virus loss coefficient.
+        i (float): Immune cell increase coefficient.
+        g1 (float): Impact coefficient of antibodies on virus reduction.
+        g2 (float): Antibody decay rate.
+        m (float): Immune cell natural death coefficient.
+    """
+    N: float = 100
+    s: float = 0.8
+    a: float = 0.5
+    u: float = 1e-3
+    i: float = 0.1
+    m: float = 0.02
+    g1: float = 0.1
+    g2: float = 0.01
+
 
 class ImmuneSimulation:
-    def __init__(self, N: float = 100, virus:float = 0, s: float = 0.8, a: float = 0.5, u: float = 0.001, 
+    def __init__(self, N: float = 100, virus: float = 0, s: float = 0.8, a: float = 0.5, u: float = 0.001, 
                  i: float = 0.1, g1: float = 0.1, g2: float = 0.01, m: float = 0.02, 
                  d: float = 500, dt: float = 0.01):
         """
@@ -45,6 +71,18 @@ class ImmuneSimulation:
         self.antibody_values = []
         self.healthy_values = []
         self.time_series = []
+    
+    def update_system(self, data: ImmuneData, virus: float=None):
+        self.N = data.N
+        self.s = data.s
+        self.a = data.a
+        self.u = data.u
+        self.i = data.i
+        self.g1 = data.g1
+        self.g2 = data.g2
+        self.m = data.m
+        self.virus = virus if virus is not None else self.virus
+        return self
         
     def update(self):
         """Updates the values of virus, infected cells, immune cells, and antibodies."""
