@@ -45,17 +45,17 @@ class Agent(Base):
         super().__init__(id)
         self.position = position if position is not None else (0, 0)
     
-    def move(self, grid_size):
+    def move(self, grid_size:tuple):
         # 随机选择上下左右移动
         direction = random.choice(["up", "down", "left", "right"])
         x, y = self.position  # 当前坐标
-        if direction == "up" and y < grid_size - 1:
+        if direction == "up" and y < grid_size[1] - 1:
             y += 1
         elif direction == "down" and y > 0:
             y -= 1
         elif direction == "left" and x > 0:
             x -= 1
-        elif direction == "right" and x < grid_size - 1:
+        elif direction == "right" and x < grid_size[0] - 1:
             x += 1
         self.position = (x, y)  # 更新位置
 
@@ -65,7 +65,7 @@ class Environment(Base):
         self._agents = agents if agents is not None else []
         self._sub_env = sub_env if sub_env is not None else []
         self._parent_env = parent_env if parent_env is not None else []
-        self.map_size = map_size if map_size is None else (10, 10)
+        self.map_size = map_size if map_size is not None else (10, 10)
         if generate_agents:
             agent_class, number = generate_agents
             if isinstance(agent_class, type) and issubclass(agent_class, Agent) and isinstance(number, int) and number > 0:
