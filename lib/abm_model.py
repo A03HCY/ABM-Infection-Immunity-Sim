@@ -5,20 +5,19 @@ from typing import Union, List, Tuple
 import math
 
 class ImmuneAgent(Agent):
-    def __init__(self, id: str = generate_random_string(4), position: Tuple[int, int] = None, v=0, dt=0.01, data:ImmuneData=None):
+    def __init__(self, id: str = generate_random_string(4), position: Tuple[int, int] = None, dt=0.01, data:ImmuneData=ImmuneData()):
         super().__init__(id, position)
-        self.virus_simulation = ImmuneSimulation(virus=v, dt=dt)
+        self.virus_simulation = MultiSimulation(native_immune=data, dt=dt)
         self.immunity_level = 0.0
         self.virus_level = 0.0
+        self.dt = dt
         self.add_virus = self.virus_simulation.add_virus
-        if data:
-            self.virus_simulation.update_system(data=data)
 
     def update_immunity(self, day=0.1):
         """更新免疫水平和病毒模拟"""
         self.virus_simulation.simulate(total_time=day)  # 每个时间步进行一次模拟
         self.immunity_level = self.virus_simulation.immune_cells  # 更新免疫水平
-        self.virus_level = self.virus_simulation.virus  # 更新病毒水平
+        self.virus_level = self.virus_simulation.total_virus  # 更新病毒水平
 
     def spread_virus(self, other_agents: List[Agent]):
         """尝试感染周围的代理，并按距离计算感染比例"""
@@ -27,12 +26,16 @@ class ImmuneAgent(Agent):
             if self.position != other.position:  # 仅在不同位置的代理之间传播
                 distance = self.calculate_distance(other)
                 infection_ratio = self.calculate_infection_ratio(distance)
-                other.add_virus(self.virus_level * infection_ratio)
-                print(f'Agent {self.id} increased Agent {other.id}\'s virus level by {self.virus_level * infection_ratio:.2f} (Distance: {distance:.2f})')
+                for v in self.virus_simulation.infected_virus:
+                    level = self.virus_simulation.virus_values.lists[v.id][-1]
+                    other.add_virus(Virus(v.id, abs(level * infection_ratio), system=v.system, native=v.native))
+                    #print(f'Agent {self.id} increased Agent {other.id}\'s virus {v.id} level by {abs(level * infection_ratio):.2f} (Distance: {distance:.2f})')
             else:
                 infection_ratio = 0.9
-                other.add_virus(self.virus_level * infection_ratio)
-                print(f'Agent {self.id} increased Agent {other.id}\'s virus level by {self.virus_level * infection_ratio:.2f} (Distance: 0)')
+                for v in self.virus_simulation.infected_virus:
+                    level = self.virus_simulation.virus_values.lists[v.id][-1]
+                    other.add_virus(Virus(v.id, abs(level * infection_ratio), system=v.system, native=v.native))
+                #print(f'Agent {self.id} increased Agent {other.id}\'s virus {v.id} level by {abs(level * infection_ratio):.2f} (Distance: 0)')
 
     def calculate_distance(self, other: Agent) -> float:
         """计算当前代理与其他代理之间的距离"""
