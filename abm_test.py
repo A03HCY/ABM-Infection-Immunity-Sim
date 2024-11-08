@@ -16,7 +16,7 @@ i.add_virus(Virus('cod', 0.1, ImmuneData()))
 environment.add_agent(i)
 
 # 运行仿真
-for t in range(365):
+for t in range(140):
     environment.step()
 
 # 输出代理的病毒水平

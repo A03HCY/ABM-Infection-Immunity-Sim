@@ -5,7 +5,7 @@ from typing import Union, List, Tuple
 import math
 
 class ImmuneAgent(Agent):
-    def __init__(self, id: str = generate_random_string(4), position: Tuple[int, int] = None, dt=0.01, data:ImmuneData=ImmuneData()):
+    def __init__(self, id: str = generate_random_string(4), position: Tuple[int, int] = None, dt=1e-2, data:ImmuneData=ImmuneData()):
         super().__init__(id, position)
         self.virus_simulation = MultiSimulation(native_immune=data, dt=dt)
         self.immunity_level = 0.0
